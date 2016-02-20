@@ -1,14 +1,9 @@
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-
-
 #include "stdafx.h"
-#include <windows.h>
 #include <winsock2.h>
-#include <ws2tcpip.h>
-#include <iphlpapi.h>
-#include <ws2def.h>
+#include <Ws2tcpip.h>
+#include <windows.h>
+#include "TCPServer.h"
+#define MAX_LOADSTRING 100
 
 #include <iostream>
 #include <sstream>
@@ -124,9 +119,8 @@ int main()
 		}
 
 		result = recv(client_socket, buf, max_client_buffer_size, 0);
+	
 
-		stringstream response; // сюда будет записываться ответ клиенту
-		stringstream response_body; // тело ответа
 
 		if (result == SOCKET_ERROR) 
 		{
@@ -145,22 +139,7 @@ int main()
 			// В буфере запроса.
 			buf[result] = '\0';
 
-			// Данные успешно получены
-			// формируем тело ответа (HTML)
-			response_body << "<title>Test C++ HTTP Server</title>\n"
-				<< "<h1>Test page</h1>\n"
-				<< "<p>This is body of the test page...</p>\n"
-				<< "<h2>Request headers</h2>\n"
-				<< "<pre>" << buf << "</pre>\n"
-				<< "<em><small>Test C++ Http Server</small></em>\n";
 
-			// Формируем весь ответ вместе с заголовками
-			response << "HTTP/1.1 200 OK\r\n"
-				<< "Version: HTTP/1.1\r\n"
-				<< "Content-Type: text/html; charset=utf-8\r\n"
-				<< "Content-Length: " << response_body.str().length()
-				<< "\r\n\r\n"
-				<< response_body.str();
 
 			// Отправляем ответ клиенту с помощью функции send
 			result = send(client_socket, response.str().c_str(),
